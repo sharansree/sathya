@@ -28,12 +28,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
-    const token = localStorage.getItem('sathya_token')
-    const userData = localStorage.getItem('sathya_user')
-    if (token && userData) {
-      setUser(JSON.parse(userData))
+    try {
+      const token = localStorage.getItem('sathya_token')
+      const userData = localStorage.getItem('sathya_user')
+      if (token && userData) {
+        setUser(JSON.parse(userData))
+      }
+    } catch (e) {
+      console.error('Auth restore error:', e)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [])
 
   const login = (token: string, user: User) => {

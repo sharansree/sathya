@@ -1,6 +1,8 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request
 from pydantic import BaseModel, EmailStr
 from passlib.context import CryptContext
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from app.db.client import get_db
 from app.core.auth import create_access_token
 from app.services.email import send_verification_email, send_password_reset_email
@@ -9,6 +11,7 @@ import uuid
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+limiter = Limiter(key_func=get_remote_address)
 
 class RegisterRequest(BaseModel):
     name: str
@@ -27,7 +30,8 @@ class ResetPasswordRequest(BaseModel):
     new_password: str
 
 @router.post("/register", status_code=201)
-def register(body: RegisterRequest):
+@limiter.limit("5/minute")
+def register(request: Request, body: RegisterRequest):
     db = get_db()
     existing = db.table("users").select("id").eq("email", body.email).execute()
     if existing.data:
@@ -43,10 +47,10 @@ def register(body: RegisterRequest):
         "email": body.email,
         "password_hash": hashed_password,
         "verification_token": verification_token,
-        "is_verified": False,
+        "is_verified": True,  # Auto-verify in dev — re-enable after Resend domain setup
     }).execute()
-    send_verification_email(body.email, verification_token, body.name)
-    return {"message": "Account created. Check your email to verify your account."}
+    # send_verification_email(body.email, verification_token, body.name)
+    return {"message": "Account created successfully. You can now sign in."}
 
 @router.get("/verify")
 def verify_email(token: str):
@@ -64,7 +68,8 @@ def verify_email(token: str):
     return {"message": "Email verified successfully. You can now sign in."}
 
 @router.post("/login")
-def login(body: LoginRequest):
+@limiter.limit("10/minute")
+def login(request: Request, body: LoginRequest):
     db = get_db()
     result = db.table("users").select("*").eq("email", body.email).execute()
     if not result.data:
@@ -82,7 +87,8 @@ def login(body: LoginRequest):
     }
 
 @router.post("/forgot-password")
-def forgot_password(body: ForgotPasswordRequest):
+@limiter.limit("3/minute")
+def forgot_password(request: Request, body: ForgotPasswordRequest):
     db = get_db()
     result = db.table("users").select("id, name").eq("email", body.email).execute()
     if result.data:

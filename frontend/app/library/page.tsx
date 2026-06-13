@@ -45,7 +45,27 @@ export default function LibraryPage() {
     })
   }
 
-  if (loading || fetching) return null
+  if (loading || fetching) return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#f5f0e8',
+      flexDirection: 'column',
+      gap: 12
+    }}>
+      <span style={{ fontSize: 28, color: '#c4922a' }}>☸</span>
+      <p style={{
+        fontFamily: 'Georgia, serif',
+        fontSize: 16,
+        color: '#9b9890',
+        fontStyle: 'italic'
+      }}>
+        Loading your library...
+      </p>
+    </div>
+  )
 
   return (
     <div className={styles.layout}>

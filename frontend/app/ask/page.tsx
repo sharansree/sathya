@@ -69,12 +69,28 @@ export default function AskPage() {
     textareaRef.current?.focus()
   }
 
-  if (loading) return null
+  if (loading) return (
+    <div style={{
+      minHeight: '100vh',
+      background: '#f5f0e8',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
+      <span style={{
+        fontSize: 48,
+        color: '#c4922a',
+        display: 'inline-block',
+        animation: 'spin 3s linear infinite',
+        lineHeight: 1
+      }}>☸</span>
+    </div>
+  )
 
   return (
     <div className={styles.layout}>
       <nav className={styles.nav}>
-        <Link href="/" className={styles.navLogo}>Sathya</Link>
+        <a href="/" className={styles.navLogo}>Sathya</a>
         <div className={styles.navRight}>
           <Link href="/library" className={styles.navLink}>Library</Link>
           <span className={styles.navUser}>{user?.name}</span>
@@ -129,7 +145,10 @@ export default function AskPage() {
                 <button
                   key={i}
                   className={styles.exampleBtn}
-                  onClick={() => { setQuestion(q); textareaRef.current?.focus() }}
+                  onClick={() => {
+                    setQuestion(q)
+                    textareaRef.current?.focus()
+                  }}
                 >
                   {q}
                 </button>
@@ -142,7 +161,7 @@ export default function AskPage() {
           <div className={styles.loading}>
             <div className={styles.loadingGlyph}>☸</div>
             <p className={styles.loadingText}>Searching the canon</p>
-            <div style={{ display: 'flex', gap: 4, justifyContent: 'center', marginTop: 8 }}>
+            <div style={{ display: 'flex', gap: 4, justifyContent: 'center', marginTop: 12 }}>
               <span className="loading-dot" />
               <span className="loading-dot" />
               <span className="loading-dot" />
@@ -152,28 +171,28 @@ export default function AskPage() {
 
         {response && (
           <div ref={responseRef} className={styles.response}>
-            <div>
+            <div className={styles.questionEcho}>
               <span className={styles.questionLabel}>Your question</span>
               <p className={styles.questionText}>{question}</p>
             </div>
 
-            <hr className="divider" />
-
-            <div>
+            <div className={styles.answerBlock}>
               <span className={styles.answerLabel}>From the teachings</span>
               <div className={styles.answerText}>
                 {response.answer.split('\n').map((para, i) => (
-                  para.trim() ? <p key={i}>{para}</p> : <br key={i} />
+                  para.trim()
+                    ? <p key={i} className={styles.answerPara}>{para}</p>
+                    : <br key={i} />
                 ))}
               </div>
             </div>
 
             {response.sources.length > 0 && (
-              <div>
+              <div className={styles.sourcesBlock}>
                 <span className={styles.sourcesLabel}>Sources consulted</span>
                 <div className={styles.sourceList}>
                   {response.sources.map((s, i) => (
-                    <div key={i} className={styles.source}>
+                    <div key={i} className={`${styles.source} ${styles.sourceAnimated}`}>
                       <span className={styles.sourceRef}>{s.reference}</span>
                       <span className={styles.sourceTitle}>{s.title}</span>
                       <span className={styles.sourceCollection}>{s.collection}</span>
@@ -184,8 +203,12 @@ export default function AskPage() {
             )}
 
             <div className={styles.responseActions}>
-              <button onClick={handleNew} className="btn-ghost">Ask another question</button>
-              <Link href="/library" className={styles.libraryLink}>View your library →</Link>
+              <button onClick={handleNew} className="btn-ghost">
+                Ask another question
+              </button>
+              <Link href="/library" className={styles.libraryLink}>
+                View your library →
+              </Link>
             </div>
           </div>
         )}

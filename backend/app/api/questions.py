@@ -1,22 +1,28 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from app.core.auth import get_current_user
 from app.services.rag import ask_sathya
 from app.db.client import get_db
 import json
 
 router = APIRouter(prefix="/questions", tags=["questions"])
+limiter = Limiter(key_func=get_remote_address)
 
 class AskRequest(BaseModel):
     question: str
 
 @router.post("/ask")
-def ask(body: AskRequest, current_user: dict = Depends(get_current_user)):
-    if len(body.question.strip()) < 5:
+@limiter.limit("20/minute")
+def ask(request: Request, body: AskRequest, current_user: dict = Depends(get_current_user)):
+    question = body.question.strip()
+    question = ' '.join(question.split())
+    if len(question) < 5:
         raise HTTPException(status_code=400, detail="Question is too short")
-    if len(body.question) > 1000:
+    if len(question) > 1000:
         raise HTTPException(status_code=400, detail="Question must be under 1000 characters")
-    response = ask_sathya(body.question, current_user["sub"])
+    response = ask_sathya(question, current_user["sub"])
     return response
 
 @router.get("/history")

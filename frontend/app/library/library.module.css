@@ -1,4 +1,11 @@
-.layout { min-height: 100vh; background: var(--parchment); }
+.layout {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(196, 146, 42, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(210, 140, 80, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 0%, rgba(196, 146, 42, 0.05) 0%, transparent 50%),
+    linear-gradient(160deg, #f7f1e6 0%, #f5ede0 40%, #f3ece2 70%, #f6f0e8 100%);
+}
 
 .nav {
   display: flex;
