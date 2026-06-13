@@ -29,14 +29,11 @@ export default function RegisterPage() {
       <div className={styles.container}>
         <div className={styles.card}>
           <div className={styles.ornament}>☸</div>
-          <h1 className={styles.title}>Check your email</h1>
-          <p className={styles.subtitle}>
-            We sent a verification link to <strong>{form.email}</strong>.
-            Click it to activate your account.
-          </p>
-          <p style={{ fontSize: 13, color: 'var(--ink-faint)', marginTop: 16 }}>
-            Didn't receive it? Check your spam folder.
-          </p>
+          <h1 className={styles.title}>Account created</h1>
+          <p className={styles.subtitle}>Welcome, {form.name}. Your account is ready.</p>
+          <Link href="/auth/login" className="btn-primary" style={{ display: 'block', textAlign: 'center', marginTop: 24 }}>
+            Sign in
+          </Link>
         </div>
       </div>
     )

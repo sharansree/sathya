@@ -5,7 +5,6 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from app.db.client import get_db
 from app.core.auth import create_access_token
-from app.services.email import send_verification_email, send_password_reset_email
 import secrets
 import uuid
 
@@ -49,7 +48,6 @@ def register(request: Request, body: RegisterRequest):
         "verification_token": verification_token,
         "is_verified": True,
     }).execute()
-    # send_verification_email(body.email, verification_token, body.name)
     return {"message": "Account created successfully. You can now sign in."}
 
 @router.get("/verify")
@@ -78,7 +76,7 @@ def login(request: Request, body: LoginRequest):
     if not pwd_context.verify(body.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
     if not user["is_verified"]:
-        raise HTTPException(status_code=403, detail="Please verify your email before signing in")
+        db.table("users").update({"is_verified": True}).eq("id", user["id"]).execute()
     token = create_access_token({"sub": user["id"], "email": user["email"], "name": user["name"]})
     return {
         "access_token": token,
@@ -94,7 +92,6 @@ def forgot_password(request: Request, body: ForgotPasswordRequest):
     if result.data:
         reset_token = secrets.token_urlsafe(32)
         db.table("users").update({"reset_token": reset_token}).eq("email", body.email).execute()
-        send_password_reset_email(body.email, reset_token)
     return {"message": "If an account exists with that email, a reset link has been sent."}
 
 @router.post("/reset-password")
