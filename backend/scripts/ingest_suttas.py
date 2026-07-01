@@ -53,6 +53,29 @@ SUTTA_UIDS = [
     # Sutta Nipata — some of the oldest teachings
     "snp1.1", "snp1.8", "snp2.1", "snp2.4", "snp3.11",
     "snp4.1", "snp4.14", "snp4.15", "snp5.1",
+
+    # Additional high-value suttas for common life questions
+    "an3.65",   # Kalama sutta - on knowing for yourself
+    "an5.161",  # Five subjects for frequent reflection  
+    "mn21",     # Kakacupama - on anger (the saw simile)
+    "mn62",     # Advice to Rahula - on reflection
+    "mn86",     # Angulimala - on transformation and redemption
+    "sn3.4",    # On aging
+    "sn55.7",   # On the factors of stream-entry
+    "an8.6",    # On the bases of sympathy
+    "an4.197",  # On equanimity
+    "dhp1-20",  # Already have this but key
+    "an6.55",   # Sona - on effort and balance
+    "mn19",     # Two kinds of thought
+    "mn20",     # Removal of distracting thoughts
+    "an5.49",   # On the five subjects
+    "sn1.20",   # On the path
+    "ud8.2",    # On nibbana
+    "snp1.3",   # The rhinoceros - on solitude
+    "snp2.14",  # On right conduct
+    "mn7",      # On mental effluents
+    "an10.61",  # On the basis of merit
+
 ]
 
 def fetch_sutta(uid: str) -> dict | None:

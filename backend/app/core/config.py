@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     smtp_port: int = 587
     smtp_user: str = ""
     smtp_password: str = ""
+    resend_api_key: str = ""
     from_email: str = "noreply@sathya.app"
     frontend_url: str = "http://localhost:3000"
 
